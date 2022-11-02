@@ -11,8 +11,8 @@
 <p align="center">
   <a href="https://docs.google.com/document/d/1VPYujc2-mKvf3UGxPz-7_9Ledfa7l2QcfsUDcq5PTEI/edit#">
     <img src="https://assets.readthedocs.org/static/projects/badges/unknown-flat.svg"
+         alt="Google Docs">
 <!-- unknown-flat.  , passing-flat r-->
-         alt="Google Doc">
   </a>
 </p>
 
@@ -24,6 +24,6 @@
   <a href="#license">License</a>
 </p>
 
-<img align="center" width="100" height="100" src="https://media.digikey.com/Photos/Seeed%20Technology%20Ltd/MFG_102010448.jpg"
+<img align="center" width="100" height="100" src="https://media.digikey.com/Photos/Seeed%20Technology%20Ltd/MFG_102010448.jpg">
 
 ## Introduction
