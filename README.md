@@ -24,6 +24,6 @@
   <a href="#license">License</a>
 </p>
 
-![screenshot](https://media.digikey.com/Photos/Seeed%20Technology%20Ltd/MFG_102010448.jpg)
+<img align="center" width="100" height="100" src="https://media.digikey.com/Photos/Seeed%20Technology%20Ltd/MFG_102010448.jpg"
 
 ## Introduction
