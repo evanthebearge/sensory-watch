@@ -2,9 +2,9 @@
  * THIS CODE IS FOR THE "MASTER: WATCH0"
  "Hearing Watch Project"
  Software borrowed from: https://wiki.seeedstudio.com/XIAO-BLE-Sense-Bluetooth-Usage/
- Rewritten by: Evan Thebearge
+ Rewritten by: Evan Thebearge, Daniel Cardone
  Version: 0.0.1 Alpha
- Updated: 11/1/22 - 12:07 AM
+ Updated: 11/1/22 - 2:04 PM
  TO-DO:
   CONTROLLING CODE FOR LED,MOTOR
   CONTROLLING CODE FOR BUTTON 0,1
@@ -31,6 +31,9 @@ const int led = D3; // pin to use for the LED
 const int motor = D4; // pin to use for the motor
 const int button0 = D0; // pin to use for button0 INPUT
 const int button1 = D1; // pin to use for button1 INPUT
+
+int oldButton0State = LOW;
+int oldButton1State = LOW;
  
 void setup() {
   // enable battery charging
@@ -72,10 +75,10 @@ void setup() {
   BLE.addService(button1Service);
  
   // set the initial value for the characeristics:
-  ledCharacteristic.writeValue(0);
-  motorCharacteristic.writeValue(0);
-  button0Characteristic.writeValue(0);
-  button1Characteristic.writeValue(0);
+  ledCharacteristic.writeValue((byte)0x00);
+  motorCharacteristic.writeValue((byte)0x00);
+  button0Characteristic.writeValue((byte)0x00);
+  button1Characteristic.writeValue((byte)0x00);
  
   // start advertising
   BLE.advertise();
@@ -102,19 +105,71 @@ void loop() {
  
     // while the central is still connected to peripheral:
   while (central.connected()) {
-        if (ledCharacteristic.written()) {
-          if (ledCharacteristic.value()) {   
-            Serial.println("LED on");
-            digitalWrite(led, LOW); // changed from HIGH to LOW       
-          } else {                              
-            Serial.println(F("LED off"));
-            digitalWrite(led, HIGH); // changed from LOW to HIGH     
-          }
-        }
+        checkForWrites();
+        checkForButtonPress();
       }
  
     // when the central disconnects, print it out:
     Serial.print("Disconnected from central: ");
     Serial.println(central.address());
+  }
+}
+
+void checkForWrites() {
+  // led control
+  if (ledCharacteristic.written()) {
+    if (ledCharacteristic.value()) {   
+      Serial.println("LED on");
+      digitalWrite(led, HIGH); // changed from HIGH to LOW       
+    } else {                              
+      Serial.println(F("LED off"));
+      digitalWrite(led, LOW); // changed from LOW to HIGH     
+    }
+  }
+  
+  // motor control
+  if (!motorCharacteristic.written()) {
+    if (motorCharacteristic.value()) {   
+      Serial.println("Motor on");
+      digitalWrite(motor, HIGH); // changed from HIGH to LOW       
+    } else {                              
+      Serial.println(F("Motor off"));
+      digitalWrite(motor, LOW); // changed from LOW to HIGH     
+    }
+  }
+}
+
+void checkForButtonPress() {
+  int button0State = digitalRead(button0);
+  int button1State = digitalRead(button1);
+
+  if (button0State != oldButton0State) {
+    oldButton0State = button0State;
+    if (button0State) {
+        Serial.println("button0 pressed");
+
+        // button0 is pressed, write 0x01 to turn the LED on
+        ledCharacteristic.writeValue((byte)0x01);
+      } else {
+        Serial.println("button0 released");
+
+        // button0 is released, write 0x00 to turn the LED off
+        ledCharacteristic.writeValue((byte)0x00);
+      }
+  }
+
+  if (button1State != oldButton1State) {
+    oldButton1State = button1State;
+    if (button1State) {
+        Serial.println("button1 pressed");
+
+        // button1 is pressed, write 0x01 to turn the LED on
+        motorCharacteristic.writeValue((byte)0x01);
+      } else {
+        Serial.println("button1 released");
+
+        // button1 is released, write 0x00 to turn the LED off
+        motorCharacteristic.writeValue((byte)0x00);
+      }
   }
 }
