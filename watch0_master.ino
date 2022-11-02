@@ -69,7 +69,7 @@ void setup() {
   BLE.addService(ledService);
   BLE.addService(motorService);
   BLE.addService(button0Service);
-  BLE.addService(buton1Service);
+  BLE.addService(button1Service);
  
   // set the initial value for the characeristics:
   ledCharacteristic.writeValue(0);
