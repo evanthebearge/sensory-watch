@@ -4,25 +4,28 @@
  Software borrowed from: https://wiki.seeedstudio.com/XIAO-BLE-Sense-Bluetooth-Usage/
  Rewritten by: Evan Thebearge
  Version: 0.0.1 Alpha
- Updated: 11/1/22 - 10:38 AM
+ Updated: 11/1/22 - 11:15 AM
  TO-DO:
-  HEX VALUE FOR BLE SERVICES
-  HEX VALUE FOR BLE CHARACTERISTIC?
   CONTROLLING CODE FOR LED,MOTOR
   CONTROLLING CODE FOR BUTTON 0,1
   DEFINE INPUT VARIABLE (0,1,2,4,8)
   MAKE BI-DIRECTIONAL COMMUNICATION SLAVE + MASTER
+  LOW BATTERY ALERT
+  CONNECT/DISCONNECT ALERT
+  PAIR ALERT
  */
 
 #include <ArduinoBLE.h>
  
-BLEService ledService("19B10000-E8F2-537E-4F6C-D104768A1214"); // Bluetooth LED Service
-BLEService motorService("19B10000-E8F2-537E-4F6C-D104768A1214"); // Bluetooth motor Service
-BLEService button0Service("19B10000-E8F2-537E-4F6C-D104768A1214"); // Bluetooth button0 Service
-BLEService button1Service("19B10000-E8F2-537E-4F6C-D104768A1214"); // Bluetooth button1 Service
+BLEService ledService("03B10000-E8F2-537E-4F6C-D104768A1214"); // Bluetooth LED Service
+BLEService motorService("04B10000-E8F2-537E-4F6C-D104768A1214"); // Bluetooth motor Service
+BLEService button0Service("00B10000-E8F2-537E-4F6C-D104768A1214"); // Bluetooth button0 Service
+BLEService button1Service("01B10000-E8F2-537E-4F6C-D104768A1214"); // Bluetooth button1 Service
  
-// Bluetooth LED Switch Characteristic - custom 128-bit UUID, read and writable by central
-BLEByteCharacteristic switchCharacteristic("19B10001-E8F2-537E-4F6C-D104768A1214", BLERead | BLEWrite);
+BLEByteCharacteristic ledCharacteristic("03B10001-E8F2-537E-4F6C-D104768A1214", BLERead | BLEWrite); // Bluetooth LED Switch Characteristic - custom 128-bit UUID, read and writable by central
+BLEByteCharacteristic motorCharacteristic("04B10001-E8F2-537E-4F6C-D104768A1214", BLERead | BLEWrite); // Bluetooth motor Switch Characteristic - custom 128-bit UUID, read and writable by central
+BLEByteCharacteristic button0Characteristic("00B10001-E8F2-537E-4F6C-D104768A1214", BLERead | BLEWrite); // Bluetooth button0 Switch Characteristic - custom 128-bit UUID, read and writable by central
+BLEByteCharacteristic button1Characteristic("01B10001-E8F2-537E-4F6C-D104768A1214", BLERead | BLEWrite); // Bluetooth button1 Switch Characteristic - custom 128-bit UUID, read and writable by central
  
 const int led = D3; // pin to use for the LED
 const int motor = D4; // pin to use for the motor
@@ -45,7 +48,7 @@ void setup() {
  
   // begin initialization
   if (!BLE.begin()) {
-    Serial.println("starting Bluetooth Low Energy module failed!");
+    Serial.println("starting Bluetooth module failed!");
  
     while (1);
   }
@@ -57,20 +60,23 @@ void setup() {
   BLE.setAdvertisedService(button0Service);
   BLE.setAdvertisedService(button1Service);
  
-  // add the characteristic to the service
-  ledService.addCharacteristic(switchCharacteristic);
-  motorService.addCharacteristic(switchCharacteristic);
-  button0Service.addCharacteristic(switchCharacteristic);
-  button1Service.addCharacteristic(switchCharacteristic);
+  // add the characteristics to the services
+  ledService.addCharacteristic(ledCharacteristic);
+  motorService.addCharacteristic(motorCharacteristic);
+  button0Service.addCharacteristic(button0Characteristic);
+  button1Service.addCharacteristic(button1Characteristic);
  
-  // add service
+  // add services
   BLE.addService(ledService);
   BLE.addService(motorService);
   BLE.addService(button0Service);
   BLE.addService(buton1Service);
  
-  // set the initial value for the characeristic:
-  switchCharacteristic.writeValue(0);
+  // set the initial value for the characeristics:
+  ledCharacteristic.writeValue(0);
+  motorCharacteristic.writeValue(0);
+  button0Characteristic.writeValue(0);
+  button1Characteristic.writeValue(0);
  
   // start advertising
   BLE.advertise();
@@ -98,8 +104,8 @@ void loop() {
  
     // while the central is still connected to peripheral:
   while (central.connected()) {
-        if (switchCharacteristic.written()) {
-          if (switchCharacteristic.value()) {   
+        if (ledCharacteristic.written()) {
+          if (ledCharacteristic.value()) {   
             Serial.println("LED on");
             digitalWrite(led, LOW); // changed from HIGH to LOW       
           } else {                              
