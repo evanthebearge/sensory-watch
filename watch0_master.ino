@@ -4,7 +4,7 @@
  Software borrowed from: https://wiki.seeedstudio.com/XIAO-BLE-Sense-Bluetooth-Usage/
  Rewritten by: Evan Thebearge
  Version: 0.0.1 Alpha
- Updated: 11/1/22 - 11:15 AM
+ Updated: 11/1/22 - 12:07 AM
  TO-DO:
   CONTROLLING CODE FOR LED,MOTOR
   CONTROLLING CODE FOR BUTTON 0,1
@@ -34,8 +34,7 @@ const int button1 = D1; // pin to use for button1 INPUT
  
 void setup() {
   // enable battery charging
-  pinMode P0_13, OUTPUT);
-  }
+  pinMode(P0_13, OUTPUT);
   
   Serial.begin(9600);
   while (!Serial);
@@ -91,7 +90,6 @@ void loop() {
 
   // battery high charging current (100mA)
   digitalWrite(P0_13, LOW);
-  }
   
   // listen for Bluetooth® Low Energy peripherals to connect:
   BLEDevice central = BLE.central();
@@ -116,7 +114,7 @@ void loop() {
       }
  
     // when the central disconnects, print it out:
-    Serial.print(F("Disconnected from central: "));
+    Serial.print("Disconnected from central: ");
     Serial.println(central.address());
   }
 }
