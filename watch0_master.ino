@@ -125,8 +125,10 @@ void checkForWrites() {
       Serial.println(F("LED off"));
       digitalWrite(led, LOW); // changed from LOW to HIGH     
     }
+  }
+  
   // motor control
-  if (motorCharacteristic.written()) {
+  if (!motorCharacteristic.written()) {
     if (motorCharacteristic.value()) {   
       Serial.println("Motor on");
       digitalWrite(motor, HIGH); // changed from HIGH to LOW       
