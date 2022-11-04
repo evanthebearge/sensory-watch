@@ -30,16 +30,16 @@ int oldbutton0state = LOW;
 int oldbutton1state = LOW;
 
 // create Bluetooth services
-BLEService ledService("3100");
-BLEService motorService("4100");
-BLEService button0Service("1100");
-BLEService button1Service("2100");
+BLEService ledServicewatch0("3100");
+BLEService motorServicewatch0("4100");
+BLEService button0Servicewatch0("1100");
+BLEService button1Servicewatch0("2100");
 
-// create characteristics to allow watch0 to read, write, and notify
-BLEByteCharacteristic ledCharacteristic("3101", BLERead | BLEWrite | BLENotify); 
-BLEByteCharacteristic motorCharacteristic("4101", BLERead | BLEWrite | BLENotify);
-BLEByteCharacteristic button0Characteristic("1101", BLERead | BLEWrite | BLENotify);
-BLEByteCharacteristic button1Characteristic("2101", BLERead | BLEWrite | BLENotify);
+// create characteristics to allow WATCH1 to read, write, and notify
+BLEByteCharacteristic ledCharacteristicwatch1("3101", BLERead | BLEWrite | BLENotify); 
+BLEByteCharacteristic motorCharacteristicwatch1("4101", BLERead | BLEWrite | BLENotify);
+BLEByteCharacteristic button0Characteristicwatch1("1101", BLERead | BLEWrite | BLENotify);
+BLEByteCharacteristic button1Characteristicwatch1("2101", BLERead | BLEWrite | BLENotify);
 
 void setup() {
   
@@ -49,7 +49,7 @@ void setup() {
   Serial.begin(9600);
   while (!Serial);
 
-  // set pins to input/output mode
+// set pins to input/output mode
   pinMode(led, OUTPUT);
   pinMode(motor, OUTPUT);
   pinMode(button0, INPUT);
@@ -58,9 +58,9 @@ void setup() {
 // initialize the Bluetooth
   BLE.begin();
   
-  Serial.println("watch0");
+  Serial.println("WATCH0");
 
-// start scanning for watch1
+// start scanning for WATCH!
   BLE.scanForUuid("0000"); 
 }
 
@@ -83,8 +83,8 @@ void loop() {
     Serial.print(peripheral.advertisedServiceUuid());
     Serial.println();
 
-// make sure peripheral is watch1
-    if (peripheral.localName() != "watch1") {
+// make sure peripheral is WATCH1
+    if (peripheral.localName() != "WATCH!") {
       return;
     }
 
@@ -120,18 +120,18 @@ void controlwatch1(BLEDevice peripheral) {
     return;
   }
 
-// retrieve the characteristics from watch1
-  BLECharacteristic ledCharacteristic = peripheral.characteristic("ledCharacteristic");
-  BLECharacteristic motorCharacteristic = peripheral.characteristic("motorCharacteristic")
-  BLECharacteristic button0 = peripheral.characteristic("button0Characteristic")
-  BLECharacteristic button1 = peripheral.characteristic("button1Characteristic")
+// retrieve the characteristics from WATCH1
+  BLECharacteristic ledCharacteristicwatch1 = peripheral.characteristic("1-ledCharacteristic");
+  BLECharacteristic motorCharacteristicwatch1 = peripheral.characteristic("1-motorCharacteristic")
+  BLECharacteristic button0watch1 = peripheral.characteristic("1-button0Characteristic")
+  BLECharacteristic button1watch1 = peripheral.characteristic("1-button1Characteristic")
 
 // check for other characteristics from watch1 ADD THEM
-  if (!ledCharacteristic) {
+  if (!ledwatch1Characteristic) {
     Serial.println("Peripheral does not have LED characteristic!");
     peripheral.disconnect();
     return;
-  } else if (!ledCharacteristic.canWrite()) {
+  } else if (!ledwatch1Characteristic.canWrite()) {
     Serial.println("Peripheral does not have a writable LED characteristic!");
     peripheral.disconnect();
     return;
@@ -149,25 +149,25 @@ void controlwatch1(BLEDevice peripheral) {
       Serial.println("button0 pressed");
       
 // button0 is pressed, write 0x01 to bluetooth to turn the LED on
-      ledCharacteristic.writeValue((byte) 0x01);
+      ledwatch1Characteristic.writeValue((byte) 0x01);
     } else {
       Serial.println("button0 released");
       
 // button0 is released, write 0x00 to bluetooth to turn the LED off
-      ledCharacteristic.writeValue((byte) 0x00);
+      ledwatch1Characteristic.writeValue((byte) 0x00);
     }
     
     if (oldbutton1state != button1state) {
 // button1 change
       Serial.println("button1 pressed");
 // button1 is pressed, write 0x01 to bluetooth to turn the motor on
-      motrCharacteristic.writeValue((byte) 0x01);
+      motorwatch1Characteristic.writeValue((byte) 0x01);
     } else {
       Serial.println("button1 released");
 // button1 is released, write 0x00 to bluetooth turn the motor off
-      motorCharacteristic.writeValue((byte) 0x00);
+      motorwatch1Characteristic.writeValue((byte) 0x00);
     }
    }
   }
-Serial.println("watch1 disconnected");
+Serial.println("WATCH1 disconnected");
 }
