@@ -6,7 +6,7 @@
   2: https://github.com/arduino-libraries/ArduinoBLE/blob/master/examples/Peripheral/ButtonLED/ButtonLED.ino
   Rewritten by: Evan Thebearge, Daniel Cardone
   Version: 0.0.1 Alpha
-  Updated: 11/3/22 - 2:31 PM
+  Updated: 11/4/22 - 8:31 AM
   TO-DO:
   CONTROLLING CODE FOR LED,MOTOR
   CONTROLLING CODE FOR BUTTON 0,1
@@ -26,20 +26,20 @@ const int button0 = D0;
 const int button1 = D1;
 
 // define button states
-int oldButton0State = LOW;
-int oldButton1State = LOW;
+int oldbutton0state = LOW;
+int oldbutton1state = LOW;
 
 // create Bluetooth services
-BLEService ledService("3000");
-BLEService motorService("4000");
-BLEService button0Service("1000");
-BLEService button1Service("2000");
+BLEService ledServicewatch1("3000");
+BLEService motorServicewatch1("4000");
+BLEService button0Servicewatch1("1000");
+BLEService button1Servicewatch1("2000");
 
 // create characteristics to allow watch0 to read, write, and notify
-BLEByteCharacteristic ledCharacteristic("3001", BLERead | BLEWrite | BLENotify); 
-BLEByteCharacteristic motorCharacteristic("4001", BLERead | BLEWrite | BLENotify);
-BLEByteCharacteristic button0Characteristic("1001", BLERead | BLEWrite | BLENotify);
-BLEByteCharacteristic button1Characteristic("2001", BLERead | BLEWrite | BLENotify);
+BLEByteCharacteristic ledCharacteristicwatch1("3001", BLERead | BLEWrite | BLENotify); 
+BLEByteCharacteristic motorCharacteristicwatch1("4001", BLERead | BLEWrite | BLENotify);
+BLEByteCharacteristic button0Characteristicwatch1("1001", BLERead | BLEWrite | BLENotify);
+BLEByteCharacteristic button1Characteristicwatch1("2001", BLERead | BLEWrite | BLENotify);
 
 void setup() {
   
@@ -77,10 +77,10 @@ void setup() {
   button1Service.addCharacteristic(button1Characteristic);
 
  // add services
-  BLE.addService(ledService);
-  BLE.addService(motorService);
-  BLE.addService(button0Service);
-  BLE.addService(button1Service);
+  BLE.addService(ledServicewatch1);
+  BLE.addService(motorServicewatch1);
+  BLE.addService(button0Servicewatch1);
+  BLE.addService(button1Servicewatch1);
 
 // set the initial value for the characeristics:
   ledCharacteristic.writeValue((byte)0x00);
@@ -91,7 +91,7 @@ void setup() {
 // start advertising
   BLE.advertise();
 
-  Serial.println("Bluetooth active, waiting for watch0");
+  Serial.println("Bluetooth active, waiting for WATCH0");
 }
 
 void loop() {
@@ -109,21 +109,21 @@ void loop() {
     Serial.println(central.address());
 
     // while the central is still connected to peripheral:
-    while (central.connected()) {
-      checkForWrites();
-      checkForButtonPress();
+    while (central.connected( {
+      checkForWrites;
+      checkForButtonPress;
     }
 
-    // when the central disconnects, print it out:
+// when the central disconnects, print it out:
     Serial.print("Disconnected from central: ");
     Serial.println(central.address());
   }
 }
 
 void checkForWrites() {
-  // led control
-  if (ledCharacteristic.written()) {
-    if (ledCharacteristic.value()) {
+// led control
+  if (ledCharacteristicwatch0.written()) {
+    if (ledCharacteristicwatch0.value()) {
       Serial.println("LED on");
       digitalWrite(led, HIGH); // changed from HIGH to LOW
     } else {
@@ -131,45 +131,34 @@ void checkForWrites() {
       digitalWrite(led, LOW); // changed from LOW to HIGH
     }
 
-    // motor control
-    if (motorCharacteristic.written()) {
-      if (motorCharacteristic.value()) {
-        Serial.println("Motor on");
-        digitalWrite(motor, HIGH); // changed from HIGH to LOW
-      } else {
-        Serial.println(F("Motor off"));
-        digitalWrite(motor, LOW); // changed from LOW to HIGH
-      }
-    }
-  }
 
   void checkForButtonPress() {
+// read the button pins
     int button0state = digitalRead(button0);
     int button1state = digitalRead(button1);
 
-    button0state = digitalRead(button0);
-    if (button0state == HIGH)
-    {
+    if (oldbutton0state != button0state) {
+// button0 changed
       Serial.println("button0 pressed");
-      // button0 is pressed, write 0x01 to turn the LED on
-      ledCharacteristic.writeValue((byte)0x01);
-    }
-    else {
+      
+// button0 is pressed, write 0x01 to bluetooth to turn the motor on
+      motorCharacteristicwatch0.writeValue((byte) 0x01);
+    } else {
       Serial.println("button0 released");
-      // button0 is released, write 0x00 to turn the LED off
-      ledCharacteristic.writeValue((byte)0x00);
+      
+// button0 is released, write 0x00 to bluetooth to turn the motor off
+      motorCharacteristicwatch0.writeValue((byte) 0x00);
     }
-    button1state = digitalRead(button1);
-    if (button1State == HIGH)
-    {
+    
+    if (oldbutton1state != button1state) {
+// button1 change
       Serial.println("button1 pressed");
-      // button1 is pressed, write 0x01 to turn the LED on
-      ledCharacteristic.writeValue((byte)0x01);
+// button1 is pressed, write 0x01 to bluetooth to turn the LED on
+      ledCharacteristicwatch0.writeValue((byte) 0x01);
+    } else {
+      Serial.println("button1 released");
+// button1 is released, write 0x00 to bluetooth turn the LED off
+      ledCharacteristicwatch0.writeValue((byte) 0x00);
     }
-    else {
-      Serial.println("button0 released");
-      // button1 is released, write 0x00 to turn the LED off
-      ledCharacteristic.writeValue((byte)0x00);
-    }
+   }
   }
-}
