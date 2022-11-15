@@ -65,16 +65,16 @@ void setup() {
 // set advertised local name and service UUID:
   BLE.setLocalName("WATCH1");
   BLE.setAdvertisedServiceUuid("0000");
-  BLE.setAdvertisedService(ledService);
-  BLE.setAdvertisedService(motorService);
-  BLE.setAdvertisedService(button0Service);
-  BLE.setAdvertisedService(button1Service);
+  BLE.setAdvertisedService(ledServicewatch1);
+  BLE.setAdvertisedService(motorServicewatch1);
+  BLE.setAdvertisedService(button0Servicewatch1);
+  BLE.setAdvertisedService(button1Servicewatch1);
 
  // add the characteristics to the services
-  ledService.addCharacteristic(ledCharacteristic);
-  motorService.addCharacteristic(motorCharacteristic);
-  button0Service.addCharacteristic(button0Characteristic);
-  button1Service.addCharacteristic(button1Characteristic);
+  ledServicewatch1.addCharacteristic(ledCharacteristicwatch1);
+  motorServicewatch1.addCharacteristic(motorCharacteristicwatch1);
+  button0Servicewatch1.addCharacteristic(button0Characteristicwatch1);
+  button1Servicewatch1.addCharacteristic(button1Characteristicwatch1);
 
  // add services
   BLE.addService(ledServicewatch1);
@@ -83,10 +83,10 @@ void setup() {
   BLE.addService(button1Servicewatch1);
 
 // set the initial value for the characeristics:
-  ledCharacteristic.writeValue((byte)0x00);
-  motorCharacteristic.writeValue((byte)0x00);
-  button0Characteristic.writeValue((byte)0x00);
-  button1Characteristic.writeValue((byte)0x00);
+  ledCharacteristicwatch1.writeValue((byte)0x00);
+  motorCharacteristicwatch1.writeValue((byte)0x00);
+  button0Characteristicwatch1.writeValue((byte)0x00);
+  button1Characteristicwatch1.writeValue((byte)0x00);
 
 // start advertising
   BLE.advertise();
@@ -109,7 +109,7 @@ void loop() {
     Serial.println(central.address());
 
     // while the central is still connected to peripheral:
-    while (central.connected( {
+    while (central.connected) {
       checkForWrites;
       checkForButtonPress;
     }
