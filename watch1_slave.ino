@@ -6,7 +6,7 @@
   2: https://github.com/arduino-libraries/ArduinoBLE/blob/master/examples/Peripheral/ButtonLED/ButtonLED.ino
   Rewritten by: Evan Thebearge, Daniel Cardone
   Version: 0.0.1 Alpha
-  Updated: 11/4/22 - 8:31 AM
+  Updated: 11/16/22 - 10:23 AM
   TO-DO:
   CONTROLLING CODE FOR LED,MOTOR
   CONTROLLING CODE FOR BUTTON 0,1
@@ -35,11 +35,11 @@ BLEService motorServicewatch1("4000");
 BLEService button0Servicewatch1("1000");
 BLEService button1Servicewatch1("2000");
 
-// create characteristics to allow watch0 to read, write, and notify
-BLEByteCharacteristic ledCharacteristicwatch1("3001", BLERead | BLEWrite | BLENotify); 
-BLEByteCharacteristic motorCharacteristicwatch1("4001", BLERead | BLEWrite | BLENotify);
-BLEByteCharacteristic button0Characteristicwatch1("1001", BLERead | BLEWrite | BLENotify);
-BLEByteCharacteristic button1Characteristicwatch1("2001", BLERead | BLEWrite | BLENotify);
+// create characteristics to allow WATCH0 to read, write, and notify
+BLEByteCharacteristic ledCharacteristicwatch0("3001", BLERead | BLEWrite | BLENotify); 
+BLEByteCharacteristic motorCharacteristicwatch0("4001", BLERead | BLEWrite | BLENotify);
+BLEByteCharacteristic button0Characteristicwatch0("1001", BLERead | BLEWrite | BLENotify);
+BLEByteCharacteristic button1Characteristicwatch0("2001", BLERead | BLEWrite | BLENotify);
 
 void setup() {
   
@@ -65,18 +65,18 @@ void setup() {
 // set advertised local name and service UUID:
   BLE.setLocalName("WATCH1");
   BLE.setAdvertisedServiceUuid("0000");
-  BLE.setAdvertisedService(ledServicewatch1);
-  BLE.setAdvertisedService(motorServicewatch1);
-  BLE.setAdvertisedService(button0Servicewatch1);
-  BLE.setAdvertisedService(button1Servicewatch1);
+  BLE.setAdvertisedService("ledServicewatch1");
+  BLE.setAdvertisedService("motorServicewatch1");
+  BLE.setAdvertisedService("button0Servicewatch1");
+  BLE.setAdvertisedService("button1Servicewatch1");
 
- // add the characteristics to the services
-  ledServicewatch1.addCharacteristic(ledCharacteristicwatch1);
-  motorServicewatch1.addCharacteristic(motorCharacteristicwatch1);
-  button0Servicewatch1.addCharacteristic(button0Characteristicwatch1);
-  button1Servicewatch1.addCharacteristic(button1Characteristicwatch1);
+// add the characteristics to the services
+  ledServicewatch1.addCharacteristic("ledCharacteristicwatch1");
+  motorServicewatch1.addCharacteristic("motorCharacteristicwatch1");
+  button0Servicewatch1.addCharacteristic("button0Characteristicwatch1");
+  button1Servicewatch1.addCharacteristic("button1Characteristicwatch1");
 
- // add services
+// add services
   BLE.addService(ledServicewatch1);
   BLE.addService(motorServicewatch1);
   BLE.addService(button0Servicewatch1);
@@ -102,13 +102,13 @@ void loop() {
 // listen for Bluetooth® Low Energy peripherals to connect:
   BLEDevice central = BLE.central();
 
-  // if a central is connected to peripheral:
+// if a central is connected to peripheral:
   if (central) {
     Serial.print("Connected to central: ");
-    // print the central's MAC address:
+// print the central's MAC address:
     Serial.println(central.address());
-
-    // while the central is still connected to peripheral:
+    }
+// while the central is still connected to peripheral:
     while (central.connected) {
       checkForWrites;
       checkForButtonPress;
@@ -117,7 +117,6 @@ void loop() {
 // when the central disconnects, print it out:
     Serial.print("Disconnected from central: ");
     Serial.println(central.address());
-  }
 }
 
 void checkForWrites() {
@@ -132,7 +131,7 @@ void checkForWrites() {
     }
 
 
-  void checkForButtonPress() {
+void checkForButtonPress() {
 // read the button pins
     int button0state = digitalRead(button0);
     int button1state = digitalRead(button1);
