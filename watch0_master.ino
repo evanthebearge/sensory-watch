@@ -6,7 +6,7 @@
   2: https://github.com/arduino-libraries/ArduinoBLE/blob/master/examples/Central/LedControl/LedControl.ino
   Rewritten by: Evan Thebearge, Daniel Cardone
   Version: 0.0.1 Alpha
-  Updated: 11/3/22 - 2:27 PM
+  Updated: 11/16/22 - 10:32 AM
   TO-DO:
   CONTROLLING CODE FOR LED,MOTOR
   CONTROLLING CODE FOR BUTTON 0,1
@@ -60,7 +60,7 @@ void setup() {
   
   Serial.println("WATCH0");
 
-// start scanning for WATCH!
+// start scanning for WATCH1
   BLE.scanForUuid("0000"); 
 }
 
@@ -119,6 +119,7 @@ void controlwatch1(BLEDevice peripheral) {
     peripheral.disconnect();
     return;
   }
+}
 
 // retrieve the characteristics from WATCH1
   BLECharacteristic ledCharacteristicwatch1 = peripheral.characteristic("1-ledCharacteristic");
@@ -168,6 +169,5 @@ void controlwatch1(BLEDevice peripheral) {
       motorwatch1Characteristic.writeValue((byte) 0x00);
     }
    }
-  }
 Serial.println("WATCH1 disconnected");
 }
