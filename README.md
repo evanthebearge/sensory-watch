@@ -35,10 +35,10 @@
 
 ##### Stage 1 - Development
 
-~~1. Understand principles behind Arduino & BLE (Bluetooth-Low-Energy)~~ **COMPLETE**
-~~2. Write base code for intial development and test basics~~ **COMPLETE**
-~~3. Adjust code to fit project guidelines: master and slave codes~~ **COMPLETE**
-**4. Verify code and fix errors**
+1. ~~Understand principles behind Arduino & BLE (Bluetooth-Low-Energy)~~ **COMPLETE**
+2. ~~Write base code for intial development and test basics~~ **COMPLETE**
+3. ~~Adjust code to fit project guidelines: master and slave codes~~ **COMPLETE**
+4. **Verify code and fix errors**
 5. Have code compile successfully
 
 ##### Stage 2 - Testing
