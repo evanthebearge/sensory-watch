@@ -6,7 +6,7 @@
   2: https://github.com/arduino-libraries/ArduinoBLE/blob/master/examples/Peripheral/ButtonLED/ButtonLED.ino
   Rewritten by: Evan Thebearge, Daniel Cardone
   Version: 0.0.1 Beta
-  Updated: 11/16/22 - 12:40 PM
+  Updated: 11/16/22 - 1:22 PM
   TO-DO:
   TEST CODE
   LOW BATTERY ALERT
@@ -78,7 +78,6 @@ void setup() {
   BLE.setAdvertisedService("motorServiceWATCH1");
   BLE.setAdvertisedService("button0ServiceWATCH1");
   BLE.setAdvertisedService("button1ServiceWATCH1");
-
 // set advertised server WATCH0
   BLE.setAdvertisedService("ledServiceWATCH0");
   BLE.setAdvertisedService("motorServiceWATCH0");
@@ -90,7 +89,6 @@ void setup() {
   motorServiceWATCH1.addCharacteristic("motorCharacteristicWATCH1");
   button0ServiceWATCH1.addCharacteristic("button0CharacteristicWATCH1");
   button1ServiceWATCH1.addCharacteristic("button1CharacteristicWATCH1");
-
 // add the characteristics to the services WATCH0
   ledServiceWATCH0.addCharacteristic("ledCharacteristicWATCH0");
   motorServiceWATCH0.addCharacteristic("motorCharacteristicWATCH0");
@@ -102,8 +100,7 @@ void setup() {
   BLE.addService(motorServiceWATCH1);
   BLE.addService(button0ServiceWATCH1);
   BLE.addService(button1ServiceWATCH1);
-
-// add services WATCH1
+// add services WATCH0
   BLE.addService(ledServiceWATCH0);
   BLE.addService(motorServiceWATCH0);
   BLE.addService(button0ServiceWATCH0);
@@ -114,7 +111,6 @@ void setup() {
   motorCharacteristicWATCH1.writeValue((byte)0x00);
   button0CharacteristicWATCH1.writeValue((byte)0x00);
   button1CharacteristicWATCH1.writeValue((byte)0x00);
-
 // set the initial value for the characeristics WATCH0
   ledCharacteristicWATCH0.writeValue((byte)0x00);
   motorCharacteristicWATCH0.writeValue((byte)0x00);
