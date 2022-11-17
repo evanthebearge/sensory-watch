@@ -5,16 +5,12 @@
   1: https://wiki.seeedstudio.com/XIAO-BLE-Sense-Bluetooth-Usage/
   2: https://github.com/arduino-libraries/ArduinoBLE/blob/master/examples/Central/LedControl/LedControl.ino
   Rewritten by: Evan Thebearge, Daniel Cardone
-  Version: 0.0.1 Alpha
-  Updated: 11/16/22 - 1:42 M
+  Version: 0.0.1 Beta
+  Updated: 11/16/22 - 12:40 PM
   TO-DO:
-  CONTROLLING CODE FOR LED,MOTOR
-  CONTROLLING CODE FOR BUTTON 0,1
-  DEFINE INPUT VARIABLE (0,1,2,4,8)
-  MAKE BI-DIRECTIONAL COMMUNICATION SLAVE + MASTER
-  LOW BATTERY ALERT
+  TEST CODE
   CONNECT/DISCONNECT ALERT
-  PAIR ALERT
+  PROPERLY DEFINED FUNCTIONS (WHAT BUTTONS WILL ACTUALLY DO FINAL)
 */
 
 #include <ArduinoBLE.h>
@@ -40,7 +36,7 @@ BLEByteCharacteristic ledCharacteristicWATCH0("3101", BLERead | BLEWrite | BLENo
 BLEByteCharacteristic motorCharacteristicWATCH0("4101", BLERead | BLEWrite | BLENotify);
 BLEByteCharacteristic button0CharacteristicWATCH0("1101", BLERead | BLEWrite | BLENotify);
 BLEByteCharacteristic button1CharacteristicWATCH0("2101", BLERead | BLEWrite | BLENotify);
-
+//
 void setup() {
   
 // enable lithium cell battery charging
@@ -73,7 +69,7 @@ void loop() {
 
   if (peripheral) {
     
-// discovered watch1, print out address, local name, and advertised service
+// discovered WATCH1, print out address, local name, and advertised service
     Serial.print("Found ");
     Serial.print(peripheral.address());
     Serial.print(" '");
@@ -87,19 +83,52 @@ void loop() {
       return;
     }
 
+/*
+POSSIBLY REMOVE?
+// set advertised services
+  BLE.setAdvertisedService("ledServiceWATCH0");
+  BLE.setAdvertisedService("motorServiceWATCH0");
+  BLE.setAdvertisedService("button0ServiceWATCH0");
+  BLE.setAdvertisedService("button1ServiceWATCH0");
+    
+// add the characteristics to the services
+  ledServiceWATCH0.addCharacteristic("ledCharacteristicWATCH0");
+  motorServiceWATCH0.addCharacteristic("motorCharacteristicWATCH0");
+  button0ServiceWATCH0.addCharacteristic("button0CharacteristicWATCH0");
+  button1ServiceWATCH0.addCharacteristic("button1CharacteristicWATCH0");
+
+// add services
+  BLE.addService(ledServiceWATCH0);
+  BLE.addService(motorServiceWATCH0);
+  BLE.addService(button0ServiceWATCH0);
+  BLE.addService(button1ServiceWATCH0);
+*/
+
+// set the initial value for the characeristics WATCH0:
+  ledCharacteristicWATCH0.writeValue((byte)0x00);
+  motorCharacteristicWATCH0.writeValue((byte)0x00);
+  button0CharacteristicWATCH0.writeValue((byte)0x00);
+  button1CharacteristicWATCH0.writeValue((byte)0x00);
+ 
+// set the initial value for the characeristics WATCH1:
+  ledCharacteristicWATCH1.writeValue((byte)0x00);
+  motorCharacteristicWATCH1.writeValue((byte)0x00);
+  button0CharacteristicWATCH1.writeValue((byte)0x00);
+  button1CharacteristicWATCH1.writeValue((byte)0x00);
+  
 // stop scanning
     BLE.stopScan();
 
-    controlwatch1(peripheral);
+    control(peripheral);
 
-// peripheral watch1 disconnected, start scanning again
+// peripheral WATCH1 disconnected, start scanning again
     BLE.scanForUuid("0000");
   }
 }
 
-void controlwatch1(BLEDevice peripheral) {
+void control(BLEDevice peripheral) {
 
-// connect to the peripheral watch1
+// connect to the peripheral WATCH1
   Serial.println("Connecting ...");
 
   if (peripheral.connect()) {
@@ -120,11 +149,17 @@ void controlwatch1(BLEDevice peripheral) {
   }
 }
 
-// retrieve the characteristics from WATCH1
+// retrieve the characteristics for WATCH1 from WATCH1
   BLECharacteristic ledCharacteristicWATCH1 = peripheral.characteristic("ledCharacteristicWATCH1");
   BLECharacteristic motorCharacteristicWATCH1 = peripheral.characteristic("motorCharacteristicWATCH1")
   BLECharacteristic button0CharacteristicWATCH1 = peripheral.characteristic("button0CharacteristicWATCH1")
   BLECharacteristic button1CharacteristicWATCH1 = peripheral.characteristic("button1CharacteristicWATCH1")
+
+// retrieve the characteristics for WATCH0 from WATCH1
+  BLECharacteristic ledCharacteristicWATCH0 = peripheral.characteristic("ledCharacteristicWATCH0");
+  BLECharacteristic motorCharacteristicWATCH0 = peripheral.characteristic("motorCharacteristicWATCH0")
+  BLECharacteristic button0CharacteristicWATCH0 = peripheral.characteristic("button0CharacteristicWATCH0")
+  BLECharacteristic button1CharacteristicWATCH0 = peripheral.characteristic("button1CharacteristicWATCH0")
 
 // check for other characteristics from WATCH1 !!ADD THEM!!
   if (!ledCharacteristicWATCH1) {
@@ -136,11 +171,35 @@ void controlwatch1(BLEDevice peripheral) {
     peripheral.disconnect();
     return;
   }
-
-  while (peripheral.connected()) {
+  
 // while the peripheral is connected
+  while (peripheral.connected()) {
+      WATCH1();
+      WATCH0();
+    }
+    
+// recieve from WATCH1
+void WATCH1() {
+  if (ledCharacteristicWATCH1.written()) {
+    if (ledCharacteristicWATCH1.value()) {
+      Serial.println("LED on");
+      digitalWrite(led, HIGH); // changed from HIGH to LOW
+    } else {
+      Serial.println("LED off");
+      digitalWrite(led, LOW); // changed from LOW to HIGH
+    }
+  if (motorCharacteristicWATCH1.written()) {
+    if (motorCharacteristicWATCH1.value()) {
+      Serial.println("Motor on");
+      digitalWrite(motor, HIGH); // changed from HIGH to LOW
+    } else {
+      Serial.println("Motor off");
+      digitalWrite(motor, LOW); // changed from LOW to HIGH
+    }
+    
+// send to WATCH0
+void WATCH0() {
 
-// transmitting section
 // read the button pins
     int button0state = digitalRead(button0);
     int button1state = digitalRead(button1);
