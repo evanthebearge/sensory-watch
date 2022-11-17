@@ -6,7 +6,7 @@
   2: https://github.com/arduino-libraries/ArduinoBLE/blob/master/examples/Central/LedControl/LedControl.ino
   Rewritten by: Evan Thebearge, Daniel Cardone
   Version: 0.0.1 Beta
-  Updated: 11/16/22 - 12:40 PM
+  Updated: 11/16/22 - 1:22 PM
   TO-DO:
   TEST CODE
   CONNECT/DISCONNECT ALERT
@@ -25,18 +25,6 @@ const int button1 = D1;
 int oldbutton0state = LOW;
 int oldbutton1state = LOW;
 
-// create Bluetooth services
-BLEService ledServiceWATCH0("3100");
-BLEService motorServiceWATCH0("4100");
-BLEService button0ServiceWATCH0("1100");
-BLEService button1ServiceWATCH0("2100");
-
-// create characteristics to allow WATCH1 to read, write, and notify
-BLEByteCharacteristic ledCharacteristicWATCH0("3101", BLERead | BLEWrite | BLENotify); 
-BLEByteCharacteristic motorCharacteristicWATCH0("4101", BLERead | BLEWrite | BLENotify);
-BLEByteCharacteristic button0CharacteristicWATCH0("1101", BLERead | BLEWrite | BLENotify);
-BLEByteCharacteristic button1CharacteristicWATCH0("2101", BLERead | BLEWrite | BLENotify);
-//
 void setup() {
   
 // enable lithium cell battery charging
@@ -88,7 +76,6 @@ void loop() {
   motorCharacteristicWATCH0.writeValue((byte)0x00);
   button0CharacteristicWATCH0.writeValue((byte)0x00);
   button1CharacteristicWATCH0.writeValue((byte)0x00);
- 
 // set the initial value for the characeristics WATCH1:
   ledCharacteristicWATCH1.writeValue((byte)0x00);
   motorCharacteristicWATCH1.writeValue((byte)0x00);
@@ -133,7 +120,6 @@ void control(BLEDevice peripheral) {
   BLECharacteristic motorCharacteristicWATCH1 = peripheral.characteristic("motorCharacteristicWATCH1")
   BLECharacteristic button0CharacteristicWATCH1 = peripheral.characteristic("button0CharacteristicWATCH1")
   BLECharacteristic button1CharacteristicWATCH1 = peripheral.characteristic("button1CharacteristicWATCH1")
-
 // retrieve the characteristics for WATCH0 from WATCH1
   BLECharacteristic ledCharacteristicWATCH0 = peripheral.characteristic("ledCharacteristicWATCH0");
   BLECharacteristic motorCharacteristicWATCH0 = peripheral.characteristic("motorCharacteristicWATCH0")
