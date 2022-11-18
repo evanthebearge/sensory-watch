@@ -6,7 +6,7 @@
   2: https://github.com/arduino-libraries/ArduinoBLE/blob/master/examples/Peripheral/ButtonLED/ButtonLED.ino
   Rewritten by: Evan Thebearge, Daniel Cardone
   Version: 0.0.1 Beta
-  Updated: 11/16/22 - 1:22 PM
+  Updated: 11/18/22 - 11:35 AM
   TO-DO:
   TEST CODE
   LOW BATTERY ALERT
@@ -15,6 +15,28 @@
 */
 
 #include <ArduinoBLE.h>
+
+// create Bluetooth services for WATCH1
+BLEService ledServiceWATCH1("30000000-0000-0000-0000-000000000000");
+BLEService motorServiceWATCH1("40000000-0000-0000-0000-000000000000");
+BLEService button0ServiceWATCH1("10000000-0000-0000-0000-000000000000");
+BLEService button1ServiceWATCH1("20000000-0000-0000-0000-000000000000");
+// create Bluetooth services for WATCH0
+BLEService ledServiceWATCH0("30010000-0000-0000-0000-000000000000");
+BLEService motorServiceWATCH0("40010000-0000-0000-0000-000000000000");
+BLEService button0ServiceWATCH0("10010000-0000-0000-0000-000000000000");
+BLEService button1ServiceWATCH0("20010000-0000-0000-0000-000000000000");
+
+// create characteristics to allow WATCH0 to read, write, and notify
+BLEByteCharacteristic ledCharacteristicWATCH1("30000001-0000-0000-0000-000000000000", BLERead | BLEWrite | BLENotify);
+BLEByteCharacteristic motorCharacteristicWATCH1("40000001-0000-0000-0000-000000000000", BLERead | BLEWrite | BLENotify);
+BLEByteCharacteristic button0CharacteristicWATCH1("10000001-0000-0000-0000-000000000000", BLERead | BLEWrite | BLENotify);
+BLEByteCharacteristic button1CharacteristicWATCH1("20000001-0000-0000-0000-000000000000", BLERead | BLEWrite | BLENotify);
+// create characteristics to allow WATCH1 to read, write, and notify
+BLEByteCharacteristic ledCharacteristicWATCH0("30010001-0000-0000-0000-000000000000", BLERead | BLEWrite | BLENotify);
+BLEByteCharacteristic motorCharacteristicWATCH0("40010001-0000-0000-0000-000000000000", BLERead | BLEWrite | BLENotify);
+BLEByteCharacteristic button0CharacteristicWATCH0("10010001-0000-0000-0000-000000000000", BLERead | BLEWrite | BLENotify);
+BLEByteCharacteristic button1CharacteristicWATCH0("20010001-0000-0000-0000-000000000000", BLERead | BLEWrite | BLENotify);
 
 // define pins
 const int led = D2;
@@ -26,32 +48,10 @@ const int button1 = D1;
 int oldbutton0state = LOW;
 int oldbutton1state = LOW;
 
-// create Bluetooth services for WATCH1
-BLEService ledServiceWATCH1("3000");
-BLEService motorServiceWATCH1("4000");
-BLEService button0ServiceWATCH1("1000");
-BLEService button1ServiceWATCH1("2000");
-// create Bluetooth services for WATCH0
-BLEService ledServiceWATCH1("3001");
-BLEService motorServiceWATCH1("4001");
-BLEService button0ServiceWATCH1("1001");
-BLEService button1ServiceWATCH1("2001");
-
-// create characteristics to allow WATCH0 to read, write, and notify
-BLEByteCharacteristic ledCharacteristicWATCH1("3001", BLERead | BLEWrite | BLENotify); 
-BLEByteCharacteristic motorCharacteristicWATCH1("4001", BLERead | BLEWrite | BLENotify);
-BLEByteCharacteristic button0CharacteristicWATCH1("1001", BLERead | BLEWrite | BLENotify);
-BLEByteCharacteristic button1CharacteristicWATCH1("2001", BLERead | BLEWrite | BLENotify);
-// create characteristics to allow WATCH1 to read, write, and notify
-BLEByteCharacteristic ledCharacteristicWATCH0("3000", BLERead | BLEWrite | BLENotify); 
-BLEByteCharacteristic motorCharacteristicWATCH0("4000", BLERead | BLEWrite | BLENotify);
-BLEByteCharacteristic button0CharacteristicWATCH0("1000", BLERead | BLEWrite | BLENotify);
-BLEByteCharacteristic button1CharacteristicWATCH("2000", BLERead | BLEWrite | BLENotify);
-
 void setup() {
-  
-// enable lithium cell battery charging
-  pinMode(P0_13, OUTPUT);
+
+// enable lithium cell battery charging DISABLED
+//  pinMode(P0_13, OUTPUT);
 
   Serial.begin(9600);
   while (!Serial);
@@ -71,29 +71,29 @@ void setup() {
 
 // set local name and advertised service UUID:
   BLE.setLocalName("WATCH1");
-  BLE.setAdvertisedServiceUuid("0000");
+  BLE.setAdvertisedServiceUuid("00000000-0000-0000-0000-000000000000");
 
-// set advertised server WATCH1  
-  BLE.setAdvertisedService("ledServiceWATCH1");
-  BLE.setAdvertisedService("motorServiceWATCH1");
-  BLE.setAdvertisedService("button0ServiceWATCH1");
-  BLE.setAdvertisedService("button1ServiceWATCH1");
+// set advertised server WATCH1
+  BLE.setAdvertisedService(ledServiceWATCH1);
+  BLE.setAdvertisedService(motorServiceWATCH1);
+  BLE.setAdvertisedService(button0ServiceWATCH1);
+  BLE.setAdvertisedService(button1ServiceWATCH1);
 // set advertised server WATCH0
-  BLE.setAdvertisedService("ledServiceWATCH0");
-  BLE.setAdvertisedService("motorServiceWATCH0");
-  BLE.setAdvertisedService("button0ServiceWATCH0");
-  BLE.setAdvertisedService("button1ServiceWATCH0");  
+  BLE.setAdvertisedService(ledServiceWATCH0);
+  BLE.setAdvertisedService(motorServiceWATCH0);
+  BLE.setAdvertisedService(button0ServiceWATCH0);
+  BLE.setAdvertisedService(button1ServiceWATCH0);
 
 // add the characteristics to the services WATCH1
-  ledServiceWATCH1.addCharacteristic("ledCharacteristicWATCH1");
-  motorServiceWATCH1.addCharacteristic("motorCharacteristicWATCH1");
-  button0ServiceWATCH1.addCharacteristic("button0CharacteristicWATCH1");
-  button1ServiceWATCH1.addCharacteristic("button1CharacteristicWATCH1");
+  ledServiceWATCH1.addCharacteristic(ledCharacteristicWATCH1);
+  motorServiceWATCH1.addCharacteristic(motorCharacteristicWATCH1);
+  button0ServiceWATCH1.addCharacteristic(button0CharacteristicWATCH1);
+  button1ServiceWATCH1.addCharacteristic(button1CharacteristicWATCH1);
 // add the characteristics to the services WATCH0
-  ledServiceWATCH0.addCharacteristic("ledCharacteristicWATCH0");
-  motorServiceWATCH0.addCharacteristic("motorCharacteristicWATCH0");
-  button0ServiceWATCH0.addCharacteristic("button0CharacteristicWATCH0");
-  button1ServiceWATCH0.addCharacteristic("button1CharacteristicWATCH0");
+  ledServiceWATCH0.addCharacteristic(ledCharacteristicWATCH0);
+  motorServiceWATCH0.addCharacteristic(motorCharacteristicWATCH0);
+  button0ServiceWATCH0.addCharacteristic(button0CharacteristicWATCH0);
+  button1ServiceWATCH0.addCharacteristic(button1CharacteristicWATCH0);
 
 // add services WATCH1
   BLE.addService(ledServiceWATCH1);
@@ -125,8 +125,8 @@ void setup() {
 
 void loop() {
 
-// battery high charging current (100mA)
-  digitalWrite(P0_13, LOW);
+// battery high charging current (100mA) DISABLED
+//  digitalWrite(P0_13, LOW);
 
 // listen for Bluetooth® Low Energy peripherals to connect:
   BLEDevice central = BLE.central();
@@ -136,12 +136,12 @@ void loop() {
     Serial.print("Connected to central: ");
 // print the central's MAC address:
     Serial.println(central.address());
-    }
+    
 // while the central is still connected to peripheral:
-    while (central.connected) {
-      WATCH0();
-      WATCH1();
-    }
+  while (central.connected) {
+    WATCH0();
+    WATCH1();
+  }
 
 // when the central disconnects, print it out:
     Serial.print("Disconnected from central: ");
@@ -149,7 +149,7 @@ void loop() {
 }
 
 // recieve from WATCH0
-void WATCH0() {
+void WATCH0(central) {
   if (ledCharacteristicWATCH0.written()) {
     if (ledCharacteristicWATCH0.value()) {
       Serial.println("LED on");
@@ -158,46 +158,46 @@ void WATCH0() {
       Serial.println("LED off");
       digitalWrite(led, LOW); // changed from LOW to HIGH
     }
-  if (motorCharacteristicWATCH0.written()) {
-    if (motorCharacteristicWATCH0.value()) {
-      Serial.println("Motor on");
-      digitalWrite(motor, HIGH); // changed from HIGH to LOW
-    } else {
-      Serial.println("Motor off");
-      digitalWrite(motor, LOW); // changed from LOW to HIGH
-    }
-    
+    if (motorCharacteristicWATCH0.written()) {
+      if (motorCharacteristicWATCH0.value()) {
+        Serial.println("Motor on");
+        digitalWrite(motor, HIGH); // changed from HIGH to LOW
+      } else {
+        Serial.println("Motor off");
+        digitalWrite(motor, LOW); // changed from LOW to HIGH
+      }
+
 // send to WATCH1
-void WATCH1() {
+      void WATCH1(central) {
 
 // read the button pins
-    int button0state = digitalRead(button0);
-    int button1state = digitalRead(button1);
+        int button0state = digitalRead(button0);
+        int button1state = digitalRead(button1);
 
 // button0 section
-    if (oldbutton0state != button0state) {
+        if (oldbutton0state != button0state) {
 // button0 changed
-      Serial.println("button0 pressed");
-      
+          Serial.println("button0 pressed");
+
 // button0 is pressed, write 0x01 to bluetooth to turn the motor on
-      motorCharacteristicWATCH0.writeValue((byte) 0x01);
-    } else {
-      Serial.println("button0 released");
-      
+          motorCharacteristicWATCH0.writeValue((byte) 0x01);
+        } else {
+          Serial.println("button0 released");
+
 // button0 is released, write 0x00 to bluetooth to turn the motor off
-      motorCharacteristicWATCH0.writeValue((byte) 0x00);
-    }
-    
-// button1 section    
-    if (oldbutton1state != button1state) {
+          motorCharacteristicWATCH0.writeValue((byte) 0x00);
+        }
+
+// button1 section
+        if (oldbutton1state != button1state) {
 // button1 change
-      Serial.println("button1 pressed");
-// button1 is pressed, write 0x01 to bluetooth to turn the LED on
-      ledCharacteristicWATCH0.writeValue((byte) 0x01);
-    } else {
-      Serial.println("button1 released");
+          Serial.println("button1 pressed");
+          // button1 is pressed, write 0x01 to bluetooth to turn the LED on
+          ledCharacteristicWATCH0.writeValue((byte) 0x01);
+        } else {
+          Serial.println("button1 released");
 // button1 is released, write 0x00 to bluetooth turn the LED off
-      ledCharacteristicWATCH0.writeValue((byte) 0x00);
+          ledCharacteristicWATCH0.writeValue((byte) 0x00);
+        }
+      }
     }
-   }
-  }
