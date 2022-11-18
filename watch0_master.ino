@@ -6,7 +6,7 @@
   2: https://github.com/arduino-libraries/ArduinoBLE/blob/master/examples/Central/LedControl/LedControl.ino
   Rewritten by: Evan Thebearge, Daniel Cardone
   Version: 0.0.1 Beta
-  Updated: 11/16/22 - 1:22 PM
+  Updated: 11/18/22 - 12:24 PM
   TO-DO:
   TEST CODE
   CONNECT/DISCONNECT ALERT
@@ -27,8 +27,8 @@ int oldbutton1state = LOW;
 
 void setup() {
   
-// enable lithium cell battery charging
-  pinMode(P0_13, OUTPUT);
+// enable lithium cell battery charging DISABLED
+//  pinMode(P0_13, OUTPUT);
 
   Serial.begin(9600);
   while (!Serial);
@@ -44,13 +44,13 @@ void setup() {
   Serial.println("WATCH0");
 
 // start scanning for WATCH1
-  BLE.scanForUuid("0000"); 
+  BLE.scanForUuid("00000000-0000-0000-0000-000000000000"); 
 }
 
 void loop() {
 
-// battery high charging current (100mA)
-  digitalWrite(P0_13, LOW);
+// battery high charging current (100mA) DISABLED
+//  digitalWrite(P0_13, LOW);
 
 // check if a peripheral has been discovered
   BLEDevice peripheral = BLE.available();
@@ -88,7 +88,7 @@ void loop() {
     control(peripheral);
 
 // peripheral WATCH1 disconnected, start scanning again
-    BLE.scanForUuid("0000");
+    BLE.scanForUuid("00000000-0000-0000-0000-000000000000");
   }
 }
 
@@ -116,15 +116,15 @@ void control(BLEDevice peripheral) {
 }
 
 // retrieve the characteristics for WATCH1 from WATCH1
-  BLECharacteristic ledCharacteristicWATCH1 = peripheral.characteristic("ledCharacteristicWATCH1");
-  BLECharacteristic motorCharacteristicWATCH1 = peripheral.characteristic("motorCharacteristicWATCH1")
-  BLECharacteristic button0CharacteristicWATCH1 = peripheral.characteristic("button0CharacteristicWATCH1")
-  BLECharacteristic button1CharacteristicWATCH1 = peripheral.characteristic("button1CharacteristicWATCH1")
+  BLECharacteristic ledCharacteristicWATCH1 = peripheral.characteristic("30000001-0000-0000-0000-000000000000");
+  BLECharacteristic motorCharacteristicWATCH1 = peripheral.characteristic("40000001-0000-0000-0000-000000000000")
+  BLECharacteristic button0CharacteristicWATCH1 = peripheral.characteristic("10000001-0000-0000-0000-000000000000")
+  BLECharacteristic button1CharacteristicWATCH1 = peripheral.characteristic("20000001-0000-0000-0000-000000000000")
 // retrieve the characteristics for WATCH0 from WATCH1
-  BLECharacteristic ledCharacteristicWATCH0 = peripheral.characteristic("ledCharacteristicWATCH0");
-  BLECharacteristic motorCharacteristicWATCH0 = peripheral.characteristic("motorCharacteristicWATCH0")
-  BLECharacteristic button0CharacteristicWATCH0 = peripheral.characteristic("button0CharacteristicWATCH0")
-  BLECharacteristic button1CharacteristicWATCH0 = peripheral.characteristic("button1CharacteristicWATCH0")
+  BLECharacteristic ledCharacteristicWATCH0 = peripheral.characteristic("30010001-0000-0000-0000-000000000000");
+  BLECharacteristic motorCharacteristicWATCH0 = peripheral.characteristic("40010001-0000-0000-0000-000000000000")
+  BLECharacteristic button0CharacteristicWATCH0 = peripheral.characteristic("10010001-0000-0000-0000-000000000000")
+  BLECharacteristic button1CharacteristicWATCH0 = peripheral.characteristic("20010001-0000-0000-0000-000000000000")
 
 // check for other characteristics from WATCH1 !!ADD THEM!!
   if (!ledCharacteristicWATCH1) {
@@ -139,12 +139,8 @@ void control(BLEDevice peripheral) {
   
 // while the peripheral is connected
   while (peripheral.connected()) {
-      WATCH1();
-      WATCH0();
-    }
     
 // recieve from WATCH1
-void WATCH1() {
   if (ledCharacteristicWATCH1.written()) {
     if (ledCharacteristicWATCH1.value()) {
       Serial.println("LED on");
@@ -153,6 +149,7 @@ void WATCH1() {
       Serial.println("LED off");
       digitalWrite(led, LOW); // changed from LOW to HIGH
     }
+  }
   if (motorCharacteristicWATCH1.written()) {
     if (motorCharacteristicWATCH1.value()) {
       Serial.println("Motor on");
@@ -161,10 +158,8 @@ void WATCH1() {
       Serial.println("Motor off");
       digitalWrite(motor, LOW); // changed from LOW to HIGH
     }
+  }
     
-// send to WATCH0
-void WATCH0() {
-
 // read the button pins
     int button0state = digitalRead(button0);
     int button1state = digitalRead(button1);
