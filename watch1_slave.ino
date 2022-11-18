@@ -6,7 +6,7 @@
   2: https://github.com/arduino-libraries/ArduinoBLE/blob/master/examples/Peripheral/ButtonLED/ButtonLED.ino
   Rewritten by: Evan Thebearge, Daniel Cardone
   Version: 0.0.1 Beta
-  Updated: 11/18/22 - 11:35 AM
+  Updated: 11/18/22 - 12:24 PM
   TO-DO:
   TEST CODE
   LOW BATTERY ALERT
@@ -139,8 +139,6 @@ void loop() {
     
 // while the central is still connected to peripheral:
   while (central.connected) {
-    WATCH0();
-    WATCH1();
   }
 
 // when the central disconnects, print it out:
@@ -149,7 +147,6 @@ void loop() {
 }
 
 // recieve from WATCH0
-void WATCH0(central) {
   if (ledCharacteristicWATCH0.written()) {
     if (ledCharacteristicWATCH0.value()) {
       Serial.println("LED on");
@@ -166,9 +163,10 @@ void WATCH0(central) {
         Serial.println("Motor off");
         digitalWrite(motor, LOW); // changed from LOW to HIGH
       }
+    }
+  }
 
 // send to WATCH1
-      void WATCH1(central) {
 
 // read the button pins
         int button0state = digitalRead(button0);
@@ -200,4 +198,4 @@ void WATCH0(central) {
           ledCharacteristicWATCH0.writeValue((byte) 0x00);
         }
       }
-    }
+     }
