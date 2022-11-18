@@ -24,8 +24,10 @@
   <a href="#license">License</a>
 </p>
 
-<img align="center" width="50%" height="50%" src="https://media.digikey.com/Photos/Seeed%20Technology%20Ltd/MFG_102010448.jpg">
-<img align="center" width="50%" height="50%" src="https://cdn.cnx-software.com/wp-content/uploads/2021/12/XIAO-nRF52840-pinout.jpg">
+<img align="center" width="25%" height="25%" src="https://media.digikey.com/Photos/Seeed%20Technology%20Ltd/MFG_102010448.jpg">
+<img align="center" width="25%" height="25%" src="https://cdn.cnx-software.com/wp-content/uploads/2021/12/XIAO-nRF52840-pinout.jpg">
+<img align="center" width="25%" height="25%" src="https://m.media-amazon.com/images/S/aplus-media-library-service-media/d01a33a7-c795-4560-8128-c0fabe6935e5.__CR0,0,970,600_PT0_SX970_V1___.jpg">
+
 
 ## Introduction
 
