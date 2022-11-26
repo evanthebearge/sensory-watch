@@ -6,7 +6,7 @@
   2: https://github.com/arduino-libraries/ArduinoBLE/blob/master/examples/Peripheral/ButtonLED/ButtonLED.ino
   Rewritten by: Evan Thebearge, Daniel Cardone
   Version: 0.0.1 Beta
-  Updated: 11/18/22 - 12:24 PM
+  Updated: 11/25/22 - 21:11 PM
   TO-DO:
   TEST CODE
   LOW BATTERY ALERT
@@ -73,12 +73,12 @@ void setup() {
   BLE.setLocalName("WATCH1");
   BLE.setAdvertisedServiceUuid("00000000-0000-0000-0000-000000000000");
 
-// set advertised server WATCH1
+// set advertised services WATCH1
   BLE.setAdvertisedService(ledServiceWATCH1);
   BLE.setAdvertisedService(motorServiceWATCH1);
   BLE.setAdvertisedService(button0ServiceWATCH1);
   BLE.setAdvertisedService(button1ServiceWATCH1);
-// set advertised server WATCH0
+// set advertised services WATCH0
   BLE.setAdvertisedService(ledServiceWATCH0);
   BLE.setAdvertisedService(motorServiceWATCH0);
   BLE.setAdvertisedService(button0ServiceWATCH0);
@@ -138,13 +138,8 @@ void loop() {
     Serial.println(central.address());
     
 // while the central is still connected to peripheral:
-  while (central.connected) {
+  while (central.connected()) {
   }
-
-// when the central disconnects, print it out:
-    Serial.print("Disconnected from central: ");
-    Serial.println(central.address());
-}
 
 // recieve from WATCH0
   if (ledCharacteristicWATCH0.written()) {
@@ -198,4 +193,8 @@ void loop() {
           ledCharacteristicWATCH0.writeValue((byte) 0x00);
         }
       }
-     }
+      
+// when the central disconnects, print it out:
+    Serial.print("Disconnected from central: ");
+    Serial.println(central.address());
+}      
