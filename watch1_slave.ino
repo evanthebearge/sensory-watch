@@ -6,7 +6,7 @@
   2: https://github.com/arduino-libraries/ArduinoBLE/blob/master/examples/Peripheral/ButtonLED/ButtonLED.ino
   Rewritten by: Evan Thebearge, Daniel Cardone
   Version: 0.0.1 Beta
-  Updated: 11/25/22 - 22:06 PM
+  Updated: 11/25/22 - 22:10 PM
   TO-DO:
   TEST CODE
   LOW BATTERY ALERT
@@ -193,7 +193,7 @@ void loop() {
         }
   }
 // when the central disconnects, print it out:
-    Serial.print("Disconnected from central: ");
+    Serial.print("WATCH0 disconnected");
     Serial.println(central.address());
   }      
 }
