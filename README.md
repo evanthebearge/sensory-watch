@@ -33,21 +33,21 @@
 
 
 ### Current Coding Objectives for Sensory Watch
-#### Current Stage: **Stage 1 - Development: *Step 4*** 
-##### Percentage Complete: 15%
+#### Current Stage: **Stage 2 - Testing: *Step 2*** 
+##### Percentage Complete: 24%
 
 ##### Stage 1 - Development
 
 1. ~~Understand principles behind Arduino & BLE (Bluetooth-Low-Energy)~~ **COMPLETE**
 2. ~~Write base code for intial development and test basics~~ **COMPLETE**
 3. ~~Adjust code to fit project guidelines: master and slave codes~~ **COMPLETE**
-4. **Verify code and fix errors**
-5. Have code compile successfully
+4. ~~Verify code and fix errors~~ **COMPLETE**
+5. ~~Have code compile successfully~~ **COMPLETE**
 
 ##### Stage 2 - Testing
 
-1. Wire SEEED on protoboard with respective defintions in the code
-2. Upload master and slave code to each SEEED
+1. ~~Wire SEEED on protoboard with respective defintions in the code~~ **COMPLETE**
+2. Upload master and slave code to each SEEED **IN PROGRESS**
 3. Test features which have been coded
 4. Find 'bugs' and features which are not working properly
 5. Fix bugs by doing **Stage 1 ***Steps 3-5* until working
