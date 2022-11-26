@@ -50,8 +50,8 @@ int oldbutton1state = LOW;
 
 void setup() {
 
-// enable lithium cell battery charging DISABLED
-//  pinMode(P0_13, OUTPUT);
+// enable lithium cell battery charging
+  pinMode(P0_13, OUTPUT);
 
   Serial.begin(9600);
   while (!Serial);
@@ -125,8 +125,8 @@ void setup() {
 
 void loop() {
 
-// battery high charging current (100mA) DISABLED
-//  digitalWrite(P0_13, LOW);
+// battery high charging current (100mA)
+  digitalWrite(P0_13, LOW);
 
 // listen for Bluetooth® Low Energy peripherals to connect:
   BLEDevice central = BLE.central();
@@ -192,9 +192,9 @@ void loop() {
 // button1 is released, write 0x00 to bluetooth turn the LED off
           ledCharacteristicWATCH0.writeValue((byte) 0x00);
         }
-      }
       
 // when the central disconnects, print it out:
     Serial.print("Disconnected from central: ");
     Serial.println(central.address());
-}      
+  }      
+}
