@@ -6,7 +6,7 @@
   2: https://github.com/arduino-libraries/ArduinoBLE/blob/master/examples/Peripheral/ButtonLED/ButtonLED.ino
   Rewritten by: Evan Thebearge, Daniel Cardone
   Version: 0.0.1 Beta
-  Updated: 11/25/22 - 22:10 PM
+  Updated: 12/9/22 - 9:30 AM
   TO-DO:
   TEST CODE
   LOW BATTERY ALERT
@@ -45,8 +45,8 @@ const int button0 = D0;
 const int button1 = D1;
 
 // define button states
-int oldbutton0state = LOW;
-int oldbutton1state = LOW;
+int button0state;
+int button1state;
 
 void setup() {
 
@@ -71,7 +71,7 @@ void setup() {
 
 // set local name and advertised service UUID:
   BLE.setLocalName("WATCH1");
-  BLE.setAdvertisedServiceUuid("00000000-0000-0000-0000-000000000000");
+  BLE.setAdvertisedServiceUuid("00000000-0001-0000-0000-000000000000");
 
 // set advertised services WATCH1
   BLE.setAdvertisedService(ledServiceWATCH1);
@@ -163,11 +163,12 @@ void loop() {
 // send to WATCH1
 
 // read the button pins
-        int button0state = digitalRead(button0);
-        int button1state = digitalRead(button1);
+        char button0state = digitalRead(button0);
+        char button1state = digitalRead(button1);
 
 // button0 section
-        if (oldbutton0state != button0state) {
+        if (button0state == LOW) {
+          
 // button0 changed
           Serial.println("button0 pressed");
 
@@ -181,7 +182,7 @@ void loop() {
         }
 
 // button1 section
-        if (oldbutton1state != button1state) {
+        if (button1state == LOW) {
 // button1 change
           Serial.println("button1 pressed");
           // button1 is pressed, write 0x01 to bluetooth to turn the LED on
