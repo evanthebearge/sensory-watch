@@ -39,7 +39,11 @@ void setup() {
   pinMode(button1, INPUT);
 
 // initialize the Bluetooth
-  BLE.begin();
+  if (!BLE.begin()) {
+    Serial.println("starting Bluetooth module failed!");
+
+    while (1);
+  }
 
   Serial.println("WATCH0");
 
@@ -73,7 +77,7 @@ void loop() {
     control(peripheral);
 
 // connect to the peripheral WATCH1
-    BLE.scanForUuid("00000000-0000-0000-0000-000000000000"); 
+    BLE.scanForUuid("00000000-0001-0000-0000-000000000000"); 
   }
 }  
 
