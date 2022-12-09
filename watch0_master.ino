@@ -6,7 +6,7 @@
   2: https://github.com/arduino-libraries/ArduinoBLE/blob/master/examples/Central/LedControl/LedControl.ino
   Rewritten by: Evan Thebearge, Daniel Cardone
   Version: 0.0.1 Beta
-  Updated: 11/25/22 - 9:21 PM
+  Updated: 12/9/22 - 9:30 AM
   TO-DO:
   TEST CODE
   CONNECT/DISCONNECT ALERT
@@ -21,8 +21,8 @@ const int button0 = D0;
 const int button1 = D1;
 
 // define button states
-int oldbutton0state = LOW;
-int oldbutton1state = LOW;
+int button0state;
+int button1state;
 
 void setup() {
 
@@ -44,7 +44,7 @@ void setup() {
   Serial.println("WATCH0");
 
 // start scanning for WATCH1
-  BLE.scanForUuid("00000000-0000-0000-0000-000000000000");
+  BLE.scanForUuid("00000000-0001-0000-0000-000000000000");
 }
 
 void loop() {
@@ -156,13 +156,12 @@ void control(BLEDevice peripheral) {
 // send to WATCH1
 
 // read the button pins
-    int button0state = digitalRead(button0);
-    int button1state = digitalRead(button1);
+    char button0state = digitalRead(button0);
+    char button1state = digitalRead(button1);
 
 // button 0 section
-    if (oldbutton0state != button0state) {
+    if (button0state == LOW) {
 // button0 changed
-      oldbutton0state = button0state;
 
       if (button0state) {
         Serial.println("button0 pressed");
@@ -178,9 +177,8 @@ void control(BLEDevice peripheral) {
     } 
     
 // button1 section      
-    if (oldbutton1state != button1state) {
+    if (button1state == LOW) {
       // button1 changed
-      oldbutton1state = button1state;
 
       if (button1state) {
         Serial.println("button1 pressed");
