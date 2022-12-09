@@ -21,8 +21,8 @@ const int button0 = D0;
 const int button1 = D1;
 
 // define button states
-int button0state;
-int button1state;
+int oldbutton0state = LOW;
+int oldbutton1state = LOW;
 
 void setup() {
 
@@ -160,13 +160,14 @@ void control(BLEDevice peripheral) {
 // send to WATCH1
 
 // read the button pins
-    char button0state = digitalRead(button0);
-    char button1state = digitalRead(button1);
+    int button0state = digitalRead(button0);
+    int button1state = digitalRead(button1);
 
 // button 0 section
-    if (button0state == LOW) {
-// button0 changed
+    if (oldbutton0state != button0state) {
 
+// button0 changed
+      oldbutton0state = button0state;
       if (button0state) {
         Serial.println("button0 pressed");
 
@@ -181,19 +182,20 @@ void control(BLEDevice peripheral) {
     } 
     
 // button1 section      
-    if (button1state == LOW) {
-      // button1 changed
+    if (oldbutton1state != button1state) {
+// button1 changed
+      oldbutton1state = button1state;
 
-      if (button1state) {
+      if (button1state) 
         Serial.println("button1 pressed");
 
 // button1 is pressed, write 0x01 to bluetooth to turn the LED on
-        ledCharacteristicWATCH1.writeValue((byte) 0x01);
+        ledCharacteristicWATCH1.writeValue((byte)0x01);
       } else {
         Serial.println("button1 released");
 
 // button1 is released, write 0x00 to bluetooth turn the LED off
-        ledCharacteristicWATCH1.writeValue((byte) 0x00);
+        ledCharacteristicWATCH1.writeValue((byte)0x00);
       }
     }
   }
