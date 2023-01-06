@@ -162,6 +162,7 @@ void control(BLEDevice peripheral) {
 // slave button0 is pressed, turn the motor on   
         Serial.println("Motor on");
         digitalWrite(motor, HIGH);
+        delay(2000);
         } else {                              // a 0 value
 // slave button0 is released, turn the motor off          
           Serial.println(F("Motor off"));
@@ -179,6 +180,7 @@ void control(BLEDevice peripheral) {
 // slave button0 is pressed, turn the LED on   
         Serial.println("LED on");
         digitalWrite(led, HIGH);
+        delay(2000);
         } else {                              // a 0 value
 // slave button0 is released, turn the LED off          
           Serial.println(F("LED off"));
