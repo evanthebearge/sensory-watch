@@ -3,7 +3,7 @@
   "Hearing Watch Project"
   Written by: Evan Thebearge
   Version 0.0.1 Beta
-  Last Updated: 1/6/22 - 4:52 PM
+  Last Updated: 1/6/22 - 5:09 PM
   ArduinoBLE GitHub used for referencing
 */ 
 
