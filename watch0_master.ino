@@ -1,31 +1,24 @@
 /*
-   THIS CODE IS FOR THE "MASTER: WATCH0"
+  THIS CODE IS FOR THE "MASTER: WATCH0"
   "Hearing Watch Project"
-  Code borrowed from:
-  1: https://wiki.seeedstudio.com/XIAO-BLE-Sense-Bluetooth-Usage/
-  2: https://github.com/arduino-libraries/ArduinoBLE/blob/master/examples/Peripheral/CallbackLED/CallbackLED.ino
-  Rewritten by: Evan Thebearge, Daniel Cardone
-  Version: 0.0.1 Beta
-  Updated: 1/5/22 - 10:48 PM
-  TO-DO:
-  TEST CODE
-  CONNECT/DISCONNECT ALERT
-  PROPERLY DEFINED FUNCTIONS (WHAT BUTTONS WILL ACTUALLY DO FINAL)
-*/
+  Written by: Evan Thebearge
+  Version 0.0.1 Beta
+  Last Updated: 1/6/22 - 2:20 PM
+  ArduinoBLE GitHub used for referencing
+*/  
 
 #include <ArduinoBLE.h>
 
-//define pins NOTE: WATCH1 IS DIFFERENT
+// define pins and button states NOTE: WATCH0 IS DIFFERENT
 const int led = D2;
-const int motor = D3;
-const int button0 = D0;
-const int button1 = D1;
-
-// variables for button
+const int motor = D5;
+const int button0 = D3;
+const int button1 = D4;
 int oldbutton0state = LOW;
 int oldbutton1state = LOW;
 
 void setup() {
+  
 // enable lithium cell battery charging
   pinMode(P0_13, OUTPUT);
     
@@ -40,18 +33,18 @@ void setup() {
 
 // begin initialization
   if (!BLE.begin()) {
-    Serial.println("starting Bluetooth Low Energy module failed!");
+    Serial.println("starting BLE failed!");
 
     while (1);
   }
   
-  Serial.println("WATCH0");
-
 // start scanning for WATCH1
   BLE.scanForName("WATCH1");
 }
 
-void loop() {
+void loop() {    
+// enable lithium cell battery high current charging  
+  digitalWrite(P0_13, HIGH);
   
 // check if WATCH0 (peripheral) has been discovered
   BLEDevice peripheral = BLE.available();
@@ -70,19 +63,18 @@ void loop() {
 // make sure peripheral is WATCH1
     if (peripheral.localName() != "WATCH1") {
       return;
-    }
+    }  
     
 // stop scanning for WATCH1
-    // stop scanning
     BLE.stopScan();
-
-// run watch script
-    control(peripheral);
-
+    
+// run WATCH scripts
+    control(peripheral);  
+    
 // if it disconnects, restart scanning for WATCH1
     BLE.scanForName("WATCH1");
   }
-}
+} 
 
 void control(BLEDevice peripheral) {
 
@@ -104,48 +96,35 @@ void control(BLEDevice peripheral) {
     Serial.println("Attribute discovery failed!");
     peripheral.disconnect();
     return;
-  }
+  }     
 
 // retrieve the characteristics from WATCH1 and verify
-  BLECharacteristic ledCharacteristicWATCH0 = peripheral.characteristic("30000001-0000-0000-0000-000000000000"); // 
-  BLECharacteristic motorCharacteristicWATCH0 = peripheral.characteristic("40000001-0000-0000-0000-000000000000"); // 
-  BLECharacteristic ledCharacteristicWATCH1 = peripheral.characteristic("10000001-0000-0000-0000-000000000000"); // 
-  BLECharacteristic motorCharacteristicWATCH1 = peripheral.characteristic("20000001-0000-0000-0000-000000000000"); // 
-  if (!ledCharacteristicWATCH0) {
-    Serial.println("Peripheral does not have LED characteristic!");
+  // characteristics for reading peripheral button status to notify master
+  BLECharacteristic peripheralbutton0notify = peripheral.characteristic("0001");
+  BLECharacteristic peripheralbutton1notify = peripheral.characteristic("0002");
+  // characteristics for read of button status from master
+  BLECharacteristic masterbutton0write = peripheral.characteristic("1001");
+  BLECharacteristic masterbutton1write = peripheral.characteristic("2002");
+
+// check if has 1 of these characteristics  
+  if (!peripheralbutton0notify) {
+    Serial.println("Peripheral does not have readable button characteristic!");
     peripheral.disconnect();
     return;
-  } else if (!ledCharacteristicWATCH0.canWrite()) {
-    Serial.println("Peripheral does not have a writable LED characteristic!");
+  } else if (!peripheralbutton0notify.canRead()) {
+    Serial.println("Peripheral does not have a readable button characteristic!");
     peripheral.disconnect();
     return;
-  }
-  
+  }  
+
 // While the WATCH1 (peripheral) is connected
   while (peripheral.connected()) {
 
-// read the button pins
-    int button0state = digitalRead(button0);
-    int button1state = digitalRead(button0);
-
-    if (oldbutton0state != button0state) {
-      
-// button0 changed
-      oldbutton0state = button0state;
-
-      if (button0state) {
-        Serial.println("button0 pressed");
-
-// button0 is pressed, write 0x01 to turn the LED on
-        button0CharacteristicWATCH1.writeValue((byte)0x01);
-      } else {
-        Serial.println("button0 released");
-
-// button0 is released, write 0x00 to turn the LED off
-        button0CharacteristicWATCH1.writeValue((byte)0x00);
-      }
-    }
+// code here will be to do the following:
+  // read button0,button1 status and send to watch0
+  // turn motor/led on or off based on info from watch0
+       
   }
-
+  
   Serial.println("WATCH1 disconnected");
 }
