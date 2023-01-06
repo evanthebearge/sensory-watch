@@ -3,7 +3,7 @@
   "Hearing Watch Project"
   Written by: Evan Thebearge
   Version 0.0.1 Beta
-  Last Updated: 1/6/22 - 2:20 PM
+  Last Updated: 1/6/22 - 4:52 PM
   ArduinoBLE GitHub used for referencing
 */ 
 
@@ -89,11 +89,73 @@ void loop() {
     
 // while the central is still connected to peripheral:    
     while (central.connected()) {
-// code here will be to do the following:
-  // read button0,button1 status and send to watch0
-  // turn motor/led on or off based on info from watch0
- 
+      
+// Turn on motor if master button0 is pressed
+      if (masterbutton0write.written()) {
+        if (masterbutton0write.value()) {   // any value other than 0
+// master button0 is pressed, write 0x01 to turn the motor on         
+          Serial.println("Motor on");
+          digitalWrite(motor, HIGH);
+        } else {                              // a 0 value
+// master button0 is released, write 0x00 to turn the motor off          
+          Serial.println(F("Motor off"));
+          digitalWrite(motor, LOW);
+        }
+      }   
+        
+// Turn on LED if master button1 is pressed
+      if (masterbutton1write.written()) {
+        if (masterbutton1write.value()) {   // any value other than 0
+// master button1 is pressed, write 0x01 to turn the LED on           
+          Serial.println("LED on");
+          digitalWrite(led, HIGH);
+        } else {                              // a 0 value
+// master button1 is released, write 0x00 to turn the LED off           
+          Serial.println(F("LED off"));
+          digitalWrite(led, LOW);
+        }
+      }
+
+// Turn on master motor if button0 is pressed
+int button0state = digitalRead(button0);
+
+if (oldbutton0state != button0state) {
+
+// button0 changed
+  oldbutton0state = button0state;
+  if (button0state) {
+    Serial.println("button0 pressed");
+    
+// button0 is pressed, write 0x01 to turn the master motor on
+    peripheralbutton0notify.writeValue((byte)0x01);
+      } else {
+        Serial.println("button0 released");
+        
+// button0 is released, write 0x00 to turn the master motor off
+    peripheralbutton0notify.writeValue((byte)0x00);   
+      }
     }
+
+// Turn on master LED if button1 is pressed
+int button1state = digitalRead(button1);
+
+if (oldbutton1state != button1state) {
+
+// button1 changed
+  oldbutton1state = button1state;
+  if (button1state) {
+    Serial.println("button1 pressed");
+    
+// button1 pressed, write 0x01 to turn the master LED on   
+    peripheralbutton1notify.writeValue((byte)0x01); 
+      } else {
+        Serial.println("button1 released");
+        
+// button1 is released, write 0x00 to turn the master LED off
+    peripheralbutton1notify.writeValue((byte)0x00);   
+      }
+    }    
+  }
     
 // when the central disconnects, print it out:
     Serial.print(F("Disconnected from central: "));
