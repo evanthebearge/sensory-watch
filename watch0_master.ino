@@ -6,7 +6,7 @@
   2: https://github.com/arduino-libraries/ArduinoBLE/blob/master/examples/Peripheral/CallbackLED/CallbackLED.ino
   Rewritten by: Evan Thebearge, Daniel Cardone
   Version: 0.0.1 Beta
-  Updated: 1/5/22 - 10:47 PM
+  Updated: 1/5/22 - 10:48 PM
   TO-DO:
   TEST CODE
   CONNECT/DISCONNECT ALERT
@@ -21,7 +21,7 @@ const int motor = D3;
 const int button0 = D0;
 const int button1 = D1;
 
-// variables for buttons
+// variables for button
 int oldbutton0state = LOW;
 int oldbutton1state = LOW;
 
@@ -76,7 +76,7 @@ void loop() {
     // stop scanning
     BLE.stopScan();
 
-// run watch scripts
+// run watch script
     control(peripheral);
 
 // if it disconnects, restart scanning for WATCH1
@@ -107,18 +107,10 @@ void control(BLEDevice peripheral) {
   }
 
 // retrieve the characteristics from WATCH1 and verify
-// characteristics to allow WATCH0 to read, write, and notify
-  BLECharacteristic ledCharacteristicWATCH1 = peripheral.characteristic("30000001-0000-0000-0000-000000000000");
-  BLECharacteristic motorCharacteristicWATCH1 = peripheral.characteristic("40000001-0000-0000-0000-000000000000"); 
-  BLECharacteristic button0CharacteristicWATCH1 = peripheral.characteristic("10000001-0000-0000-0000-000000000000");
-  BLECharacteristic button1CharacteristicWATCH1 = peripheral.characteristic("20000001-0000-0000-0000-000000000000");
-// characteristics to allow WATCH1 to read, write, and notify
-  BLECharacteristic ledCharacteristicWATCH0 = peripheral.characteristic("30010001-0000-0000-0000-000000000000");
-  BLECharacteristic motorCharacteristicWATCH0 = peripheral.characteristic("40010001-0000-0000-0000-000000000000");
-  BLECharacteristic button0CharacteristicWATCH0 = peripheral.characteristic("10010001-0000-0000-0000-000000000000");
-  BLECharacteristic button1CharacteristicWATCH0 = peripheral.characteristic("20010001-0000-0000-0000-000000000000");
-  
-
+  BLECharacteristic ledCharacteristicWATCH0 = peripheral.characteristic("30000001-0000-0000-0000-000000000000"); // 
+  BLECharacteristic motorCharacteristicWATCH0 = peripheral.characteristic("40000001-0000-0000-0000-000000000000"); // 
+  BLECharacteristic ledCharacteristicWATCH1 = peripheral.characteristic("10000001-0000-0000-0000-000000000000"); // 
+  BLECharacteristic motorCharacteristicWATCH1 = peripheral.characteristic("20000001-0000-0000-0000-000000000000"); // 
   if (!ledCharacteristicWATCH0) {
     Serial.println("Peripheral does not have LED characteristic!");
     peripheral.disconnect();
@@ -154,5 +146,6 @@ void control(BLEDevice peripheral) {
       }
     }
   }
+
   Serial.println("WATCH1 disconnected");
 }
