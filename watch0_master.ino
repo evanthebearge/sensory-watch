@@ -11,9 +11,9 @@
 
 // define pins and button states NOTE: WATCH0 IS DIFFERENT
 const int led = D2;
-const int motor = D5;
-const int button0 = D3;
-const int button1 = D4;
+const int motor = D3;
+const int button0 = D0;
+const int button1 = D1;
 int oldbutton0state = LOW;
 int oldbutton1state = LOW;
 
@@ -106,7 +106,7 @@ void control(BLEDevice peripheral) {
   BLECharacteristic masterbutton0write = peripheral.characteristic("1001");
   BLECharacteristic masterbutton1write = peripheral.characteristic("2002");
 
-// check if has 1 of these characteristics  
+// check if it has 1 of these characteristics  
   if (!peripheralbutton0notify) {
     Serial.println("Peripheral does not have readable button characteristic!");
     peripheral.disconnect();
@@ -115,15 +115,108 @@ void control(BLEDevice peripheral) {
     Serial.println("Peripheral does not have a readable button characteristic!");
     peripheral.disconnect();
     return;
-  }  
+  } 
 
+// subscribe to notifcations
+   
+  Serial.println("Subscribing to peripheralbutton0notify ...");
+  if (!peripheralbutton0notify) {
+    Serial.println("characteristic peripheralbutton0notify not found!");
+    peripheral.disconnect();
+    return;
+  } else if (!peripheralbutton0notify.canSubscribe()) {
+    Serial.println("characteristic peripheralbutton0notify not subscribable!");
+    peripheral.disconnect();
+    return;
+  } else if (!peripheralbutton0notify.subscribe()) {
+    Serial.println("peripheralbutton0notify subscription failed!");
+    peripheral.disconnect();
+    return;
+  }
+  
+  Serial.println("Subscribing to peripheralbutton1notify ...");
+  if (!peripheralbutton1notify) {
+    Serial.println("characteristic peripheralbutton1notify not found!");
+    peripheral.disconnect();
+    return;
+  } else if (!peripheralbutton1notify.canSubscribe()) {
+    Serial.println("characteristic peripheralbutton0notify not subscribable!");
+    peripheral.disconnect();
+    return;
+  } else if (!peripheralbutton1notify.subscribe()) {
+    Serial.println("peripheralbutton1notify subscription failed!");
+    peripheral.disconnect();
+    return;
+  }  
+  
 // While the WATCH1 (peripheral) is connected
   while (peripheral.connected()) {
+      
+// Turn on motor if slave button0 is pressed
+      if (peripheralbutton0notify.written()) {
+        if (peripheralbutton0notify.value()) {   // any value other than 0
+// slave button0 is pressed, write 0x01 to turn the motor on         
+          Serial.println("Motor on");
+          digitalWrite(motor, HIGH);
+        } else {                              // a 0 value
+// slave button0 is released, write 0x00 to turn the motor off          
+          Serial.println(F("Motor off"));
+          digitalWrite(motor, LOW);
+        }
+      }   
+        
+// Turn on LED if slave button1 is pressed
+      if (peripheralbutton1notify.written()) {
+        if (peripheralbutton1notify.value()) {   // any value other than 0
+// master button1 is pressed, write 0x01 to turn the LED on           
+          Serial.println("LED on");
+          digitalWrite(led, HIGH);
+        } else {                              // a 0 value
+// master button1 is released, write 0x00 to turn the LED off           
+          Serial.println(F("LED off"));
+          digitalWrite(led, LOW);
+        }
+      }
 
-// code here will be to do the following:
-  // read button0,button1 status and send to watch0
-  // turn motor/led on or off based on info from watch0
-       
+// Turn on master motor if button0 is pressed
+int button0state = digitalRead(button0);
+
+if (oldbutton0state != button0state) {
+
+// button0 changed
+  oldbutton0state = button0state;
+  if (button0state) {
+    Serial.println("button0 pressed");
+    
+// button0 is pressed, write 0x01 to turn the slave motor on
+    masterbutton0write.writeValue((byte)0x01);
+      } else {
+        Serial.println("button0 released");
+        
+// button0 is released, write 0x00 to turn the slave motor off
+    masterbutton0write.writeValue((byte)0x00);   
+      }
+    }
+
+// Turn on slave LED if button1 is pressed
+int button1state = digitalRead(button1);
+
+if (oldbutton1state != button1state) {
+
+// button1 changed
+  oldbutton1state = button1state;
+  if (button1state) {
+    Serial.println("button1 pressed");
+    
+// button1 pressed, write 0x01 to turn the slave LED on   
+    masterbutton1write.writeValue((byte)0x01); 
+      } else {
+        Serial.println("button1 released");
+        
+// button1 is released, write 0x00 to turn the slave LED off
+    masterbutton1write.writeValue((byte)0x00);   
+      }
+    }    
   }
   
   Serial.println("WATCH1 disconnected");
