@@ -3,7 +3,7 @@
   "Hearing Watch Project"
   Written by: Evan Thebearge
   Version 0.0.1 Beta
-  Last Updated: 1/6/22 - 2:20 PM
+  Last Updated: 1/6/22 - 5:09 PM
   ArduinoBLE GitHub used for referencing
 */  
 
@@ -152,33 +152,41 @@ void control(BLEDevice peripheral) {
 // While the WATCH1 (peripheral) is connected
   while (peripheral.connected()) {
       
-// Turn on motor if slave button0 is pressed
-      if (peripheralbutton0notify.written()) {
-        if (peripheralbutton0notify.value()) {   // any value other than 0
-// slave button0 is pressed, write 0x01 to turn the motor on         
-          Serial.println("Motor on");
-          digitalWrite(motor, HIGH);
+// check if slave button0 has been updated
+    if (peripheralbutton0notify.valueUpdated()) {
+      
+// yes, get the value, characteristic is 1 byte so use byte value
+      byte value = 0;
+      peripheralbutton0notify.readValue(value);
+      if (value & 0x01) {
+// slave button0 is pressed, turn the motor on   
+        Serial.println("Motor on");
+        digitalWrite(motor, HIGH);
         } else {                              // a 0 value
-// slave button0 is released, write 0x00 to turn the motor off          
+// slave button0 is released, turn the motor off          
           Serial.println(F("Motor off"));
-          digitalWrite(motor, LOW);
-        }
-      }   
-        
-// Turn on LED if slave button1 is pressed
-      if (peripheralbutton1notify.written()) {
-        if (peripheralbutton1notify.value()) {   // any value other than 0
-// master button1 is pressed, write 0x01 to turn the LED on           
-          Serial.println("LED on");
-          digitalWrite(led, HIGH);
-        } else {                              // a 0 value
-// master button1 is released, write 0x00 to turn the LED off           
-          Serial.println(F("LED off"));
-          digitalWrite(led, LOW);
-        }
+          digitalWrite(motor, LOW);        
       }
+    }
 
-// Turn on master motor if button0 is pressed
+// check if slave button1 has been updated
+    if (peripheralbutton1notify.valueUpdated()) {
+      
+// yes, get the value, characteristic is 1 byte so use byte value
+      byte value = 0;
+      peripheralbutton1notify.readValue(value);
+      if (value & 0x01) {
+// slave button0 is pressed, turn the LED on   
+        Serial.println("LED on");
+        digitalWrite(led, HIGH);
+        } else {                              // a 0 value
+// slave button0 is released, turn the LED off          
+          Serial.println(F("LED off"));
+          digitalWrite(led, LOW);        
+      }
+    }
+
+// Turn on slave motor if button0 is pressed
 int button0state = digitalRead(button0);
 
 if (oldbutton0state != button0state) {
