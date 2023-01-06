@@ -96,6 +96,7 @@ void loop() {
 // master button0 is pressed, write 0x01 to turn the motor on         
           Serial.println("Motor on");
           digitalWrite(motor, HIGH);
+          delay(2000);
         } else {                              // a 0 value
 // master button0 is released, write 0x00 to turn the motor off          
           Serial.println(F("Motor off"));
@@ -109,6 +110,7 @@ void loop() {
 // master button1 is pressed, write 0x01 to turn the LED on           
           Serial.println("LED on");
           digitalWrite(led, HIGH);
+          delay(2000);
         } else {                              // a 0 value
 // master button1 is released, write 0x00 to turn the LED off           
           Serial.println(F("LED off"));
