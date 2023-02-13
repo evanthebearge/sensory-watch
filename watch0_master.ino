@@ -28,8 +28,8 @@ void setup() {
 // set pins to input/output mode
   pinMode(led, OUTPUT);
   pinMode(motor, OUTPUT);
-  pinMode(button0, INPUT);
-  pinMode(button1, INPUT);
+  pinMode(button0, INPUT_PULLUP);
+  pinMode(button1, INPUT_PULLUP);
 
 // begin initialization
   if (!BLE.begin()) {
