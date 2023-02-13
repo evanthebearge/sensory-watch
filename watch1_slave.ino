@@ -3,17 +3,17 @@
   "Hearing Watch Project"
   Written by: Evan Thebearge
   Version 0.0.1 Beta
-  Last Updated: 1/6/22 - 5:09 PM
+  Last Updated: 2/13/23 - 11:00 AM
   ArduinoBLE GitHub used for referencing
 */ 
 
 #include <ArduinoBLE.h>
 
-// define pins and button states NOTE: WATCH0 IS DIFFERENT
+// define pins and button states
 const int led = D2;
-const int motor = D5;
-const int button0 = D3;
-const int button1 = D4;
+const int motor = D6;
+const int button0 = D4;
+const int button1 = D5;
 int oldbutton0state = LOW;
 int oldbutton1state = LOW;
 
